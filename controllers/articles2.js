@@ -68,6 +68,7 @@ function generatePosts(post) {
     postContainer.css("display", "block");
     postContainer.attr("id", "");
     postContainer.addClass("class", "postContainer");
+    postContainer.addClass("class", "d-flex");
 
     var postHeader = postContainer.find(".card-header");
     var postBody = postContainer.find(".card-text");
@@ -101,9 +102,9 @@ function showPosts(articles) {
 
 function getSortOrder(prop) {
     return function (a, b) {
-        if (a[prop]===false&&b[prop]===true) {
+        if (a[prop] < b[prop]) {
             return 1;
-        } else if (a[prop]===true&&b[prop]===false) {
+        } else if (a[prop] > b[prop]) {
             return -1;
         }
         return 0;
