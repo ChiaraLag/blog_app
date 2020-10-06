@@ -50,7 +50,7 @@ function addPost() {
     resetModal();
 
     var post = new Post(title, body, public, featured);
-    if (post - featured === true) {
+    if (post.featured === true) {
         posts.unshift(post)
     }
     else {
