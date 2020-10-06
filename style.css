@@ -1,0 +1,18 @@
+body{
+    background: url('white.gif') no-repeat center center fixed;
+    background-size: cover;
+}
+
+footer{
+    background-color: #263238;
+}
+
+footer p {
+    color:#eceff1;
+}
+
+#article-page{
+    column-count:2;   
+}
+
+#
