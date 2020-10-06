@@ -1,59 +1,30 @@
-var posts = [];
-
-posts.push(new Post("Je", "blablabla", true, false))
-posts.push(new Post("Ne", "blablabla", true, false))
-posts.push(new Post("Sais", "blablabla", true, false))
-posts.push(new Post("Pas", "blablabla", true, false))
-
-
 var postContainer;
 var modal;
 var saveBtn;
 var articles = [];
-var tags =[];
+var tags = [];
 var article;
 
+init();
 
+function init() {
 
-$(document).ready(function () {
+    $(document).ready(function () {
 
-    $("#saveBtn").click(addPost);
+        $("#saveBtn").click(addPost);
 
-
-
-    $.get({
-        url: "https://api.npoint.io/24620ef625c768a4f3c4",
-        success: function (result, textStatus, jqXHR) {
-            articles = result;
-
-            function GetSortOrder(prop) {    
-                return function(a, b) {    
-                    if (a[prop] < b[prop]) {    
-                        return 1;    
-                    } else if (a[prop] > b[prop]) {    
-                        return -1;    
-                    }    
-                    return 0;    
-                }    
-            }    
-                
-            articles.sort(GetSortOrder("featured"));  
-            console.log("articoli",articles);
-
-            for (var i = 0; i < articles.length; i++) {
-                var post = articles[i];
-                if(post.public===true)
-                generatePosts(post);
-                console.log(post.public);
-
+        $.get({
+            url: "https://api.npoint.io/24620ef625c768a4f3c4",
+            success: function (result, textStatus, jqXHR) {
+                articles = result;
+                articles.sort(getSortOrder("featured"));
+                console.log("articoli", articles);
+                showPosts(articles);
             }
-        }
+        });
+
     });
-
-
-
-});
-
+}
 
 function closeModal() {
     $("#exampleModal").modal("hide");
@@ -79,10 +50,10 @@ function addPost() {
     resetModal();
 
     var post = new Post(title, body, public, featured);
-    if(post-featured===true){
+    if (post - featured === true) {
         posts.unshift(post)
     }
-    else{
+    else {
         posts.push(post)
     };
 
@@ -93,41 +64,48 @@ function addPost() {
 
 function generatePosts(post) {
 
-    if (post.public === true && post.featured === true) {
-        article = '<div class="row my-6"><div class="col-md-12 card" style="background-color:#ef9a9a"><div class="card"><header class="card-header">' + post.title + '</header><img src="..." class="card-img-top" alt="..."><article><h5 class="card-title">' + post.title + '</h5><p class="card-text">' + post.body + '</p></article><footer><p>Public</p></footer></div></div>'
-        tags=(post.tag).toString();
-        $(".articles").prepend(article,"Tag: "+tags);
-    }
-    else if (post.public === true && post.featured === false) {
-        article = '<div class="row my-6"><div class="col-md-12 card"><div class="card"><header class="card-header">' + post.title + '</header><img src="..." class="card-img-top" alt="..."><article><h5 class="card-title">' + post.title + '</h5><p class="card-text">' + post.body + '</p></article><footer><p>Public</p></footer></div></div>'
-        tags=(post.tag).toString();
-        $(".articles").append(article,"Tag: "+tags);
-    }
-    else if (post.public === false && post.featured === true) {
-        article = '<div class="row my-6"><div class="col-md-12 card" style="background-color:#ef9a9a"><div class="card"><header class="card-header">' + post.title + '</header><img src="..." class="card-img-top" alt="..."><article><h5 class="card-title">' + post.title + '</h5><p class="card-text">' + post.body + '</p></article><footer><p>Draft</p></footer></div></div>'
-        tags=(post.tag).toString();
-        $(".articles").prepend(article,"Tag: "+tags);
-    }
-    else if (post.public === false && post.featured === false){
-        article = '<div class="my-6"><div class="row y-6"><div class="col-md-12 card"><div class="card"><header class="card-header">' + post.title + '</header><img src="..." class="card-img-top" alt="..."><article><h5 class="card-title">' + post.title + '</h5><p class="card-text">' + post.body + '</p></article><footer><p>Draft</p></footer></div></div></div>'
-        tags=(post.tag).toString();
-        $(".articles").prepend(article,"Tag: "+tags);
-    }
+    var postContainer = $("#postContainer").clone();
+    postContainer.css("display", "block");
+    postContainer.attr("id", "");
+    postContainer.addClass("class", "postContainer");
 
-}
+    var postHeader = postContainer.find(".card-header");
+    var postBody = postContainer.find(".card-text");
+    var postTags = postContainer.find(".tags");
+    var cardBody = postContainer.find(".card-body")
 
-function publicPosts(post) {
+    if(post.featured===true){
+        postHeader.css("background-color","#64b5f6");
+        cardBody.css("background-color","#64b5f6");
+    };
+
+    postHeader.html(post.title);
+    postBody.html(post.body);
+    postTags.html("Tags: "+(post.tag).toString());
+
+    $("#postsRow").append(postContainer);
 
 }
 
 function showPosts(articles) {
 
     for (var i = 0; i < articles.length; i++) {
-        var post = posts[i];
-        if (post.public === true) {
+        var post = articles[i];
+        if (post.public === true)
             generatePosts(post);
-        }
+        console.log(post.public);
 
     }
 
 }
+
+function getSortOrder(prop) {
+    return function (a, b) {
+        if (a[prop] < b[prop]) {
+            return 1;
+        } else if (a[prop] > b[prop]) {
+            return -1;
+        }
+        return 0;
+    }
+} 
